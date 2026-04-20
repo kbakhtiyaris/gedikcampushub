@@ -1,0 +1,41 @@
+### Get All Courses
+GET http://localhost:8080/api/courses
+Accept: application/json
+
+### Create a Course
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+  "courseName": "Object Oriented Programming",
+  "credits": 3,
+  "maxCapacity": 30
+}
+
+### Get Course by ID
+GET http://localhost:8080/api/courses/1
+Accept: application/json
+
+### Get Non-Existent Course (404)
+GET http://localhost:8080/api/courses/9999
+Accept: application/json
+
+### Enroll Student
+POST http://localhost:8080/api/enroll
+Content-Type: application/json
+
+{
+  "studentId": 1,
+  "courseId": 1,
+  "enrollmentDate": "2026-03-30"
+}
+
+### Enroll Again - Should give 400 Full
+POST http://localhost:8080/api/enroll
+Content-Type: application/json
+
+{
+  "studentId": 2,
+  "courseId": 1,
+  "enrollmentDate": "2026-03-30"
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{nav.notes}">Notes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">CampusHub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link active" th:href="@{/notes}">Notes</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/courses}">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/sessions}">Timetable</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/students}">Students</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/basket}">Study Basket</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 class="mb-3" th:text="#{nav.notes}">Notes</h1>
+
+    <!-- Search form -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="get" class="d-flex">
+                <input type="text" name="keyword" th:value="${keyword}"
+                       class="form-control me-2" placeholder="Search by title...">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <span class="text-muted" th:text="'Showing ' + ${notes.size()} + ' notes'">Showing 5 notes</span>
+        </div>
+    </div>
+
+
+    <a th:href="@{/notes/new}" class="btn btn-primary mb-3">+ New Note</a>
+
+    <div th:if="${#lists.isEmpty(notes)}" class="alert alert-info">
+        No notes yet.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(notes)}"
+           class="table table-striped table-bordered align-middle">
+        <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Created At</th>
+            <th>File</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="note : ${notes}">
+            <td th:text="${note.id}">1</td>
+            <td th:text="${note.title}">Sample</td>
+            <td th:text="${note.type}">NOTE</td>
+            <td th:text="${note.createdAt}">2026-03-24</td>
+            <td th:text="${note.fileName == null ? '-' : note.fileName}">-</td>
+            <td th:text="${note.course != null ? note.course.code : 'N/A'}">MECH201</td>
+            <td>
+                <a th:href="@{|/notes/${note.id}/delete|}" class="btn btn-sm btn-outline-danger">Delete</a>
+                <a th:href="@{|/basket/add?noteId=${note.id}|}" class="btn btn-sm btn-outline-success ms-1">
+                    Add to basket
+                </a>
+                <a th:if="${note.fileName != null}"
+                   th:href="@{|/notes/${note.id}/download|}"
+                   class="btn btn-sm btn-outline-info ms-1">Download</a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav aria-label="Notes pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            <!-- First page -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/notes(page=0, size=5)}">&laquo;&laquo; First</a>
+            </li>
+
+            <!-- Previous page -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/notes(page=${currentPage - 1}, size=5)}">&laquo; Prev</a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:text="${i + 1}" th:href="@{/notes(page=${i}, size=5)}"></a>
+            </li>
+
+            <!-- Next page -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/notes(page=${currentPage + 1}, size=5)}">Next &raquo;</a>
+            </li>
+
+            <!-- Last page -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/notes(page=${totalPages - 1}, size=5)}">Last &raquo;&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+</html>
